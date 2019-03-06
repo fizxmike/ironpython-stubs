@@ -457,6 +457,12 @@ def has_item_starting_with(p_seq, p_start):
 def out_docstring(out_func, docstring, indent):
     if not isinstance(docstring, str): return
     lines = docstring.strip().split("\n")
+
+    # shimming in "# type: ..." hint for non-private python methods (PEP 484)
+    if lines[0].find("__") ==-1:
+        if lines[0].find("(") > -1:
+            out_func(indent, "# type: " + lines[0][lines[0].find("("):])  # strips out function name any leading info
+
     if lines:
         if len(lines) == 1:
             out_func(indent, '""" ' + lines[0] + ' """')
